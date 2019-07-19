@@ -174,7 +174,6 @@
     #Need to install pip on Mac and run in console: sudo apt-get install pip 
     #Install the package with: pip install umap-learn
     
-    
     mix_full <- RunUMAP(object = mix_full, dims = 1:10)
     DimPlot(object = mix_full, reduction = 'umap')
 
