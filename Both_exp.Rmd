@@ -1,0 +1,79 @@
+---
+title: "Results_3"
+author: "programandoconro"
+date: "7/19/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r , echo=TRUE, results=T,warning=F,message=F}
+     
+   library(dplyr)
+   library(Seurat)
+   library(cowplot)
+   library(bigmemory)
+
+   RO48_1 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_1/")%>%
+                  CreateSeuratObject(min.cells = 30, min.features = 2000,project = "RO48 Exp.1")
+   DMSO_1 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_1/")%>%
+            CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.1")
+   
+   mix_1 <- merge(x=RO48_1,y= DMSO_1)%>%
+      NormalizeData(verbose = FALSE)%>%
+      FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+    
+   rm(RO48_1,DMSO_1)
+   
+   RO48_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_2/")%>%
+            CreateSeuratObject(min.cells = 30, min.features = 2000,project = "RO48 Exp.2")
+   DMSO_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_2/")%>%
+             CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.2")
+   
+   mix_2 <- merge(x=RO48_2,y= DMSO_2)%>%
+      NormalizeData(verbose = FALSE)%>%
+      FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+    
+   rm(RO48_2,DMSO_2)
+   
+   mix_full <- merge(x=mix_1,y=mix_2)
+   
+   rm (mix_1,mix_2)
+    
+```
+
+
+```{r , echo=TRUE, results=T,warning=F,message=F}
+  
+      FeatureScatter(object = mix_full, feature1 = "nCount_RNA", feature2 = "nFeature_RNA",pt.size = 1,smooth = F)
+        
+      ######################### PCA exp_full #################################################
+      
+      all.genes <- rownames(x = mix_full)
+      
+      mix_full <- ScaleData(object = mix_full, features = all.genes)
+      mix_full <- RunPCA(object = mix_full, features = VariableFeatures(object = mix_full))
+      
+      VizDimLoadings(object = mix_full, dims = 1:2, reduction = 'pca')
+      DimPlot(object = mix_full, reduction = 'pca')
+      
+      DimHeatmap(object =mix_full, dims = 1, cells = 500, balanced = TRUE)
+      DimHeatmap(object =mix_full, dims = 1:15, cells = 500, balanced = TRUE)
+      
+      ElbowPlot(object = mix_full)
+      
+      ################### Clusters exp_full ################################################
+      
+      mix_full <- FindNeighbors(object = mix_full, dims = 1:10)
+      mix_full <- FindClusters(object = mix_full, resolution = 0.5)
+      
+      ####################### UMAP exp_full #######################################################
+ 
+        #pip install umap-learn
+      
+      mix_full <- RunUMAP(object = mix_full, dims = 1:10)
+      DimPlot(object = mix_full, reduction = 'umap')
+
+```
