@@ -1,4 +1,4 @@
-     ########################## Requiered packages ##########################################
+          ################## Requiered packages ##########################################
      
       library(dplyr)
       library(Seurat)
@@ -61,8 +61,18 @@
       # find markers for every cluster compared to all remaining cells, report only the positive ones
       pbmc.markers <- FindAllMarkers(object = mix_1, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
       pbmc.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
+     
+       ####################### UMAP exp_1 #######################################################
+      #Need to install pip on Mac and run in console: sudo apt-get install pip 
+      #Install the package with: pip install umap-learn
       
-   ######################## Exp_2 ##################################################
+      mix_1 <- RunUMAP(object = mix_1, dims = 1:10)
+      DimPlot(object = mix_1, reduction = 'umap')
+      
+      ###########################################################################################
+      
+   
+    ######################## Exp_2 ##################################################
    
     RO48_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_2/")%>%
       CreateSeuratObject(min.cells = 3, min.features = 200,project = "RO48 Exp.2")
@@ -119,6 +129,15 @@
     pbmc.markers <- FindAllMarkers(object = mix_2, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
     pbmc.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
     
+    ####################### UMAP exp_2 #######################################################
+    #Need to install pip on Mac and run in console: sudo apt-get install pip 
+    #Install the package with: pip install umap-learn
+    
+    mix_2 <- RunUMAP(object = mix_2, dims = 1:10)
+    DimPlot(object = mix_2, reduction = 'umap')
+    
+    ###########################################################################################
+    
     ##################################################################################
     ###################### Full_data #################################################
     ##################################################################################
@@ -150,7 +169,8 @@
     mix_full <- merge(x=mix_1,y=mix_2)%>%
       NormalizeData(verbose = FALSE)%>%
       FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
-  
+    
+    
     rm (mix_1,mix_2)
     
     ##################################################################################
@@ -185,3 +205,4 @@
     DimPlot(object = mix_full, reduction = 'umap')
     
     ###########################################################################################
+  
