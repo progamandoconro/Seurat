@@ -1,4 +1,4 @@
-      ###################### Requiered packages ##########################################
+     ########################## Requiered packages ##########################################
      
       library(dplyr)
       library(Seurat)
@@ -62,8 +62,7 @@
       pbmc.markers <- FindAllMarkers(object = mix_1, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
       pbmc.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
       
-   
-    ######################## Exp_2 ##################################################
+   ######################## Exp_2 ##################################################
    
     RO48_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_2/")%>%
       CreateSeuratObject(min.cells = 3, min.features = 200,project = "RO48 Exp.2")
@@ -82,7 +81,7 @@
     FeatureScatter(object = mix_2, feature1 = "nCount_RNA", feature2 = "nFeature_RNA",pt.size = 1,smooth = T)
       
     rm(RO48_2,DMSO_2)
-
+    
     ######################### PCA exp_2 #################################################
     
     all.genes <- rownames(x = mix_2)
@@ -120,10 +119,10 @@
     pbmc.markers <- FindAllMarkers(object = mix_2, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
     pbmc.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
     
-    
     ##################################################################################
     ###################### Full_data #################################################
     ##################################################################################
+   
     rm(mix_1,mix_2)
     
     RO48_1 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_1/")%>%
@@ -131,19 +130,27 @@
     DMSO_1 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_1/")%>%
       CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.1")
     
-    mix_1 <- merge(x=RO48_1,y= DMSO_1)
+    mix_1 <- merge(x=RO48_1,y= DMSO_1)%>%
+      NormalizeData(verbose = FALSE)%>%
+      FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+    
     rm(RO48_1,DMSO_1)
     
     RO48_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_2/")%>%
       CreateSeuratObject(min.cells = 30, min.features = 2000,project = "RO48 Exp.2")
     DMSO_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_2/")%>%
       CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.2")
-   
-    mix_2 <- merge(x=RO48_2,y= DMSO_2)
+    
+    mix_2 <- merge(x=RO48_2,y= DMSO_2)%>%
+      NormalizeData(verbose = FALSE)%>%
+      FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+    
     rm(RO48_2,DMSO_2)
     
-    mix_full <- merge(x=mix_1,y=mix_2)
-    
+    mix_full <- merge(x=mix_1,y=mix_2)%>%
+      NormalizeData(verbose = FALSE)%>%
+      FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+  
     rm (mix_1,mix_2)
     
     ##################################################################################
@@ -158,7 +165,7 @@
     mix_full <- RunPCA(object = mix_full, features = VariableFeatures(object = mix_full))
     
     VizDimLoadings(object = mix_full, dims = 1:2, reduction = 'pca')
-    DimPlot(object = mix_full, reduction = 'pca')
+      DimPlot(object = mix_full, reduction = 'pca')
     
     DimHeatmap(object =mix_full, dims = 1, cells = 500, balanced = TRUE)
     DimHeatmap(object =mix_full, dims = 1:15, cells = 500, balanced = TRUE)
@@ -176,6 +183,5 @@
     
     mix_full <- RunUMAP(object = mix_full, dims = 1:10)
     DimPlot(object = mix_full, reduction = 'umap')
-
+    
     ###########################################################################################
-  
