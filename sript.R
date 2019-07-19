@@ -1,4 +1,4 @@
-              ################## Requiered packages ##########################################
+      ###################### Requiered packages ##########################################
      
       library(dplyr)
       library(Seurat)
@@ -82,10 +82,7 @@
     FeatureScatter(object = mix_2, feature1 = "nCount_RNA", feature2 = "nFeature_RNA",pt.size = 1,smooth = T)
       
     rm(RO48_2,DMSO_2)
-    
-  
-    
-    
+
     ######################### PCA exp_2 #################################################
     
     all.genes <- rownames(x = mix_2)
@@ -141,8 +138,7 @@
       CreateSeuratObject(min.cells = 30, min.features = 2000,project = "RO48 Exp.2")
     DMSO_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_2/")%>%
       CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.2")
-    
-    
+   
     mix_2 <- merge(x=RO48_2,y= DMSO_2)
     rm(RO48_2,DMSO_2)
     
@@ -181,7 +177,6 @@
     
     mix_full <- RunUMAP(object = mix_full, dims = 1:10)
     DimPlot(object = mix_full, reduction = 'umap')
-    
-    
+
     ###########################################################################################
   
