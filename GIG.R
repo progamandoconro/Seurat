@@ -56,13 +56,13 @@ rm(exp_1)
 ##Read, normalize and find features in the data
 
 RO48_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/RO48_2/")%>%
-  CreateSeuratObject(min.cells = 3, min.features = 200,project = "RO48 Exp.2")%>%
+  CreateSeuratObject(min.cells = 30, min.features = 2000,project = "RO48 Exp.2")%>%
   NormalizeData(verbose = FALSE)%>%
   FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
 
 
 DMSO_2 <- Read10X(data.dir = "~/Dropbox/DataScience/Fiver/DMSO_2/")%>%
-  CreateSeuratObject(min.cells = 3, min.features = 200,project = "DMSO Exp.2")%>%
+  CreateSeuratObject(min.cells = 30, min.features = 2000,project = "DMSO Exp.2")%>%
   NormalizeData(verbose = FALSE)%>%
   FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
 
@@ -91,7 +91,7 @@ exp_2 <-ScaleData(exp_2,verbose = FALSE)%>%
 
 # Visualization
 
-g2 <- DimPlot(exp_2, reduction = "umap",group.by = 'DMSO_1')
+g2 <- DimPlot(exp_2, reduction = "umap",group.by = 'DMSO_2')
 
 g2 + scale_color_discrete(labels=c('DMSO_2','RO48_2'))
 
